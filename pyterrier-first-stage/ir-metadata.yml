@@ -11,11 +11,11 @@
 # See https://www.ir-metadata.org for more details.
 
 # The name (i.e., tag) of your system
-tag: ENTER_VALUE_HERE
+tag: ows-bm25
 
 actor:
   # The name of the team
-  team: ENTER_VALUE_HERE
+  team: OpenWebSearch
 
 research goal:
   # Please provide a short description of your system.
@@ -38,7 +38,7 @@ implementation:
     # Please provide a reference to your code if possible.
     # If you can not share your code, you can delete the implementation section.
     # The repro_eval and/or tirex_tracker tools can track this automatically, including commits, branches, etc.
-    repository: ENTER_VALUE_HERE
+    repository: https://github.com/OpenWebSearch/LONGEVAL-25/
 
 data:
   # Please describe which training data your system used, e.g., longeval-sci, longeval-web, MS MARCO, etc.
