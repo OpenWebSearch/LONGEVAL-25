@@ -1,28 +1,13 @@
-# We use the ir-metadata standard to describe and process runs.
-# The fields below are mandatory, you can add additional metadata if you like.
-# There are two libraries that automate and simplify tracking of experimental metadata that you can use optionally:
-#
-#   - The metadata module of [repro_eval](https://www.ir-metadata.org/software/):
-#     Tracks the platform and implementation of your experiments.
-#
-#   - The [tirex_tracker](https://github.com/tira-io/tirex-tracker/):
-#     Tracks the platform, implementation, and resources (e.g., CPU, GPU, RAM, emissions, etc.) of your experiments.
-#
-# See https://www.ir-metadata.org for more details.
-
-# The name (i.e., tag) of your system
-tag: ows-bm25
+tag: ows-pl2
 
 actor:
-  # The name of the team
   team: OpenWebSearch
 
 research goal:
-  # Please provide a short description of your system.
   description: |
     A PyTerrier baseline that uses the ir-datasets integration for LongEval.
     
-    We use BM25 and leave everything to the defaults of PyTerrier.
+    We use PL2 and leave everything to the defaults of PyTerrier.
     I.e., no training data is used at all.
 
 platform:
@@ -55,8 +40,7 @@ method:
     stopwords: Default from PyTerrier
 
   retrieval:
-    - # Which ranking approach do you use? E.g., bm25
-      name: BM25
+      name: PL2
 
       ##################################################
       # Yes/No Questions

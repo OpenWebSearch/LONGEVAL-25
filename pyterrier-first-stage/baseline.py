@@ -7,8 +7,6 @@ import pandas as pd
 import pyterrier as pt
 from ir_datasets_longeval import load
 
-# We use the tracker to monitor resource consumption etc. of the indexing and retrieval.
-# The tracking is optional, i.e., you can remove it or switch to an alternative such as repro_eval.
 from tirex_tracker import tracking
 
 
@@ -42,7 +40,7 @@ def process_dataset(ir_dataset, index_directory, output_directory):
 
     index = get_index(ir_dataset, index_directory)
     with tracking(export_file_path=output_directory / "retrieval-ir-metadata.yml"):
-        bm25 = pt.terrier.Retriever(index, wmodel="BM25")
+        retriever = pt.terrier.Retriever(index, wmodel="PL2")
 
         # potentially do some query processing
         topics = pd.DataFrame(
@@ -61,7 +59,7 @@ def process_dataset(ir_dataset, index_directory, output_directory):
             lambda i: " ".join(tokeniser.getTokens(i))
         )
 
-        run = bm25(topics)
+        run = retriever(topics)
         pt.io.write_results(run, output_directory / "run.txt.gz")
         copy(index_directory / "index-ir-metadata.yml", output_directory / "index-ir-metadata.yml")
 
