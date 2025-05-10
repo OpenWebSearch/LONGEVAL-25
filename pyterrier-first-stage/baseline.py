@@ -19,12 +19,10 @@ def get_index(ir_dataset, index_directory):
         or not (index_directory / "data.properties").exists()
     ):
         with tracking(export_file_path=index_directory / "index-ir-metadata.yml"):
-            # build the index
             indexer = pt.IterDictIndexer(
-                str(index_directory), overwrite=True, meta={"docno": 100, "text": 20480}, properties={"metaindex.compressed.reverse.allow.duplicates": True}
+                str(index_directory), overwrite=True, meta={"docno": 100, "text": 20480}
             )
 
-            # you can do some custom document processing here
             docs = (
                 {"docno": i.doc_id, "text": i.default_text()}
                 for i in ir_dataset.docs_iter()
@@ -42,7 +40,6 @@ def process_dataset(ir_dataset, index_directory, output_directory):
     with tracking(export_file_path=output_directory / "retrieval-ir-metadata.yml"):
         retriever = pt.terrier.Retriever(index, wmodel="PL2")
 
-        # potentially do some query processing
         topics = pd.DataFrame(
             [
                 {"qid": i.query_id, "query": i.default_text()}
