@@ -1,0 +1,57 @@
+tag: ows-bm25-keyqueries
+
+actor:
+  team: OpenWebSearch
+
+research goal:
+  description: |
+    A PyTerrier implementation of the "Counterfactual Query Rewriting to Use Historical Relevance Feedback" approach published at ECIR 2025 (https://webis.de/publications.html#keller_2025a). We use the ir-datasets integration for LongEval to formulate keyqueries against documents that were previously relevant.
+
+platform:
+  software:
+    libraries:
+      - click
+      - tira>=0.0.160
+      - python-terrier==0.13.0
+      - ir-datasets-longeval>=0.0.8
+      - tirex-tracker
+
+implementation:
+  source:
+    repository: https://github.com/OpenWebSearch/LONGEVAL-25/
+
+data:
+  training data:
+    - name: only the previous datasets from the ir-datasets integration
+
+method:
+  # Boolean value indicating if it is a automatic (true) or manual (false) run
+  automatic: true
+
+  indexing:
+    tokenizer: Default from PyTerrier
+    stemmer: Default from PyTerrier
+    stopwords: Default from PyTerrier
+
+  retrieval:
+    - # Which ranking approach do you use? E.g., bm25
+      name: BM25
+
+      ##################################################
+      # Yes/No Questions
+      ##################################################
+
+      # Did you use any statistical ranking model? (yes/no)
+      lexical: yes
+
+      # Did you use any deep neural network model? (yes/no)
+      deep_neural_model: no
+
+      # Did you use a sparse neural model? (yes/no):
+      sparse_neural_model: no
+
+      # Did you use a dense neural model? (yes/no):
+      dense_neural_model: no
+
+      # Did you use more than a single retrieval model? (yes/no):
+      single_stage_retrieval: no
