@@ -1,0 +1,3 @@
+ir-datasets==0.5.10
+r-datasets-longeval==0.0.9
+snorkel==0.9.9
