@@ -11,29 +11,32 @@ def list_to_string(df):
     return df
 
 
-def remove_duplicate_authors(row):
+def remove_duplicate_authors(df):
     """
     If the paper's name is already there and the names of the authors of the same paper are repeated twice
     """
-    try:
-        titles = ast.literal_eval(row['doc_title'])
-        authors = ast.literal_eval(row['doc_authors'])
-    except Exception:
-        return row  # Skip malformed entries
+    def process_row(row):
+        try:
+            titles = ast.literal_eval(row['doc_title'])
+            authors = ast.literal_eval(row['doc_authors'])
+        except Exception:
+            return row  # Skip malformed entries
 
-    seen = set()
-    filtered_titles = []
-    filtered_authors = []
+        seen = set()
+        filtered_titles = []
+        filtered_authors = []
 
-    for title, author_group in zip(titles, authors):
-        if title not in seen:
-            seen.add(title)
-            filtered_titles.append(title)
-            filtered_authors.append(author_group)
+        for title, author_group in zip(titles, authors):
+            if title not in seen:
+                seen.add(title)
+                filtered_titles.append(title)
+                filtered_authors.append(author_group)
 
-    row['doc_title'] = str(filtered_titles)
-    row['doc_authors'] = str(filtered_authors)
-    return row
+        row['doc_title'] = str(filtered_titles)
+        row['doc_authors'] = str(filtered_authors)
+        return row
+    return df.apply(process_row, axis=1)
+
 
 def snorkel_to_intent_category(df):
     df['snorkel_label'] = df['snorkel_label'].replace({
@@ -115,5 +118,8 @@ if __name__ == '__main__':
     print(df_final_intent['snorkel_label'])
     write_tsv(df_final_intent,"data/output/longeval25_sci_train_intent.tsv")
 
-    percentage_navigational = (df_unique_authors_same_paper['snorkel_label'] == "navigational").mean() * 100
+    navigational_count = df_final_intent['snorkel_label'].value_counts().get('navigational', 0)
+    print(f"Number of navigational labels: {navigational_count}")
+
+    percentage_navigational = (df_final_intent['snorkel_label'] == "navigational").mean() * 100
     print(f"Percentage of navigational queries: {percentage_navigational:.2f}%")
