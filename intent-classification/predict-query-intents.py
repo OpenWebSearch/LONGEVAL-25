@@ -4,7 +4,8 @@ import click
 from ir_datasets_longeval import load
 import gzip
 import json
-from tirex_tracker import tracking, ExportFormat
+from snorkel.labeling.model import LabelModel
+#from tirex_tracker import tracking, ExportFormat
 
 def predict_intent(query_text, relevant_docs):
     return 1
@@ -59,6 +60,7 @@ def process_dataset(ir_dataset, output_directory, query_to_relevant_documents):
 @click.command()
 @click.option("--predict", type=str, help="The dataset id or a local directory on which the predictions should be made.")
 @click.option("--prior-datasets", type=str, multiple=True, help="The dataset id or a local directory on which the predictions should be made.")
+@click.option("--model", type=Path, default=Path(__file__).parent/"models"/"snorkel_intent_model", help="The snorkel model to run.")
 @click.option("--output", type=Path, required=True, help="The output directory.")
 def main(predict, prior_datasets, output):
     ir_dataset = load(predict)
