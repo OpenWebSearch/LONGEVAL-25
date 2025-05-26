@@ -1,0 +1,58 @@
+tag: ows-cluster-boosting
+
+actor:
+  team: OpenWebSearch
+
+research goal:
+  description: |
+    A PyTerrier implementation of a system that clusters the documents in the training dataset and boosts documents if they appear in a shard that contained relevant documents for the same query in previous timesteps.
+
+platform:
+  software:
+    libraries:
+      - click
+      - tira>=0.0.160
+      - python-terrier==0.13.0
+      - ir-datasets-longeval>=0.0.8
+      - tirex-tracker
+      - document-clustering
+
+implementation:
+  source:
+    repository: https://github.com/OpenWebSearch/LONGEVAL-25/
+
+data:
+  training data:
+    - name: only the previous datasets from the ir-datasets integration
+
+method:
+  # Boolean value indicating if it is a automatic (true) or manual (false) run
+  automatic: true
+
+  indexing:
+    tokenizer: Default from PyTerrier
+    stemmer: Default from PyTerrier
+    stopwords: Default from PyTerrier
+
+  retrieval:
+    - # Which ranking approach do you use? E.g., bm25
+      name: PL2
+
+      ##################################################
+      # Yes/No Questions
+      ##################################################
+
+      # Did you use any statistical ranking model? (yes/no)
+      lexical: yes
+
+      # Did you use any deep neural network model? (yes/no)
+      deep_neural_model: no
+
+      # Did you use a sparse neural model? (yes/no):
+      sparse_neural_model: no
+
+      # Did you use a dense neural model? (yes/no):
+      dense_neural_model: no
+
+      # Did you use more than a single retrieval model? (yes/no):
+      single_stage_retrieval: no
