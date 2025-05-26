@@ -8,6 +8,11 @@ This directory contains a PyTerrier baseline for the retrieval task of [LongEval
 ./fusion-with-core.py --dataset longeval-sci/clef-2025-test --output output-fusion-with-core --index indexes --core-documents top-core-documents.jsonl.gz
 ```
 
+
+```
+./qrel-boost-core.py --dataset longeval-sci/clef-2025-test --prior-stage output-fusion-with-core --output qrel-boost-core
+```
+
 ```
 ./baseline.py --dataset longeval-sci/clef-2025-test --output output --index indexes
 ```
