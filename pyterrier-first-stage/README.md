@@ -10,7 +10,7 @@ This directory contains a PyTerrier baseline for the retrieval task of [LongEval
 
 
 ```
-./qrel-boost-core.py --dataset longeval-sci/clef-2025-test --prior-stage output-fusion-with-core --output qrel-boost-core
+./qrel-boost-core.py --dataset longeval-sci/clef-2025-test --prior-stage output-fusion-with-core --output output-qrel-boost-core
 ```
 
 ```
