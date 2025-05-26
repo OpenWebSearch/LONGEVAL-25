@@ -9,7 +9,6 @@ from ir_datasets_longeval import load
 from baseline import get_index
 import gzip
 from tqdm import tqdm
-
 from tirex_tracker import tracking
 
 

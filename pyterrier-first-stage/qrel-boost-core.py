@@ -7,12 +7,7 @@ import pandas as pd
 import pyterrier as pt
 from ir_datasets_longeval import load
 from tira.third_party_integrations import normalize_run
-
-# We use the tracker to monitor resource consumption etc. of the indexing and retrieval.
-# The tracking is optional, i.e., you can remove it or switch to an alternative such as repro_eval.
 from tirex_tracker import tracking
-
-
 
 
 class QrelBoost(pt.Transformer):
