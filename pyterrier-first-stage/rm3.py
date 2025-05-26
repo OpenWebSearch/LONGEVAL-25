@@ -7,6 +7,7 @@ import pandas as pd
 import pyterrier as pt
 from ir_datasets_longeval import load
 from baseline import get_index
+from tira.third_party_integrations import normalize_run
 from tirex_tracker import tracking
 
 
@@ -15,7 +16,7 @@ def process_dataset(ir_dataset, index_dir, prior_stage_dir, output_directory):
         return
 
     with tracking(export_file_path=output_directory / "retrieval-ir-metadata.yml"):
-        index = get_index(ir_dataset, index_directory)
+        index = get_index(ir_dataset, index_dir)
         prior_stage = pt.io.read_results(prior_stage_dir / "run.txt.gz")
         bm25 = pt.terrier.Retriever(index, wmodel="BM25")
         pipeline = prior_stage >> pt.rewrite.RM3(index) >> bm25

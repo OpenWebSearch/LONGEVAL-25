@@ -14,7 +14,7 @@ This directory contains a PyTerrier baseline for the retrieval task of [LongEval
 ```
 
 ```
-./rm3.py --dataset longeval-sci/clef-2025-test --index index --prior-stage output-qrel-boost-core --output output-rm3
+./rm3.py --dataset longeval-sci/clef-2025-test --index indexes --prior-stage output-qrel-boost-core --output output-rm3
 ```
 
 ```
