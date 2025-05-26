@@ -6,6 +6,7 @@ import click
 import pandas as pd
 import pyterrier as pt
 from ir_datasets_longeval import load
+from tira.third_party_integrations import normalize_run
 
 # We use the tracker to monitor resource consumption etc. of the indexing and retrieval.
 # The tracking is optional, i.e., you can remove it or switch to an alternative such as repro_eval.
@@ -56,6 +57,7 @@ class QrelBoost(pt.Transformer):
                 continue
 
         df["rank"] = df.groupby("qid")["score"].rank(ascending=False).astype(int)
+
         df = df.sort_values(["qid", "rank"])
 
         return df
@@ -80,7 +82,7 @@ def process_dataset(ir_dataset, prior_stage_dir, output_directory):
             ]
         )
 
-        run = pipeline(topics)
+        run = normalize_run(pipeline(topics), "qrel-boost-core")
         pt.io.write_results(run, output_directory / "run.txt.gz")
 
 
