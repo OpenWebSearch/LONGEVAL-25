@@ -18,9 +18,14 @@ This directory contains a PyTerrier baseline for the retrieval task of [LongEval
 ```
 
 ```
-./baseline.py --dataset longeval-sci/clef-2025-test --output output --index indexes
+./intent-based-fusion.py --dataset longeval-sci/clef-2025-test --output output-intent-based-fusion --query
+-intents ../intent-classification/data/output/ --navigational-run output-qrel-boost-core/ --informational-run output-rm3/
 ```
 
+
+```
+./baseline.py --dataset longeval-sci/clef-2025-test --output output --index indexes
+```
 
 
 ## Development
