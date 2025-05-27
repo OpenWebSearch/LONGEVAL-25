@@ -49,7 +49,6 @@ def process_dataset(ir_dataset, output_directory, query_intents, navigational_ru
         with gzip.open(output_directory / "run.txt.gz", "wt") as f:
             for r in ranking:
                 f.write(r + '\n')
-        copy(index_directory / "index-ir-metadata.yml", output_directory / "index-ir-metadata.yml")
 
 def load_intents(intent_file):
     ret = {}

@@ -1,0 +1,60 @@
+tag: query-intent-fusion
+
+actor:
+  team: OpenWebSearch
+
+research goal:
+  description: |
+    This run predicts the intent of an query from the historical clicks as either navigational or informational. For navigational queries, we return the qrel-boost-core rankings (with the intention that it is save to move known relevant documents to the top for navigational queries). For informational queries, we return the rm3-on-qrel-boost rankings (with the intetion that informational queries require exploratorive searchers where users are also interested in new, previously unknown relevant documents).
+platform:
+  software:
+    libraries:
+      - click
+      - tira>=0.0.160
+      - python-terrier==0.13.0
+      - ir-datasets-longeval>=0.0.8
+      - tirex-tracker
+      - datasets
+
+implementation:
+  source:
+    # Please provide a reference to your code if possible.
+    # If you can not share your code, you can delete the implementation section.
+    # The repro_eval and/or tirex_tracker tools can track this automatically, including commits, branches, etc.
+    repository: https://github.com/OpenWebSearch/LONGEVAL-25/
+
+data:
+  # Please describe which training data your system used, e.g., longeval-sci, longeval-web, MS MARCO, etc.
+  training data:
+    - name: Nothing
+
+method:
+  # Boolean value indicating if it is a automatic (true) or manual (false) run
+  automatic: true
+
+  indexing:
+    tokenizer: Default from PyTerrier
+    stemmer: Default from PyTerrier
+    stopwords: Default from PyTerrier
+
+  retrieval:
+      name: BM25
+
+      ##################################################
+      # Yes/No Questions
+      ##################################################
+
+      # Did you use any statistical ranking model? (yes/no)
+      lexical: yes
+
+      # Did you use any deep neural network model? (yes/no)
+      deep_neural_model: no
+
+      # Did you use a sparse neural model? (yes/no):
+      sparse_neural_model: no
+
+      # Did you use a dense neural model? (yes/no):
+      dense_neural_model: no
+
+      # Did you use more than a single retrieval model? (yes/no):
+      single_stage_retrieval: yes
