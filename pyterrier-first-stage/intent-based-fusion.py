@@ -11,7 +11,12 @@ import gzip
 from tqdm import tqdm
 from tirex_tracker import tracking
 from glob import glob
+from tira.third_party_integrations import normalize_run
 
+def create_prior_run(directory, irds):
+    topics = pd.DataFrame([{"qid": i.query_id, "query": "ignore"} for i in irds.queries_iter()])
+    run = pt.io.read_results(directory / "run.txt.gz")
+    return normalize_run(pt.Transformer.from_df(run)(topics), str(directory))
 
 def process_dataset(ir_dataset, output_directory, query_intents, navigational_run, informational_run):
     if (output_directory / "run.txt.gz").exists():
@@ -19,29 +24,27 @@ def process_dataset(ir_dataset, output_directory, query_intents, navigational_ru
 
     output_directory.mkdir(parents=True, exist_ok=True)
     with tracking(export_file_path=output_directory / "retrieval-ir-metadata.yml"):
-        navigational_stage = pt.io.read_results(navigational_run / "run.txt.gz")
-        informational_stage = pt.io.read_results(navigational_run / "run.txt.gz")
-        
+        navigational_stage = create_prior_run(navigational_run, ir_dataset)
+        informational_stage = create_prior_run(navigational_run, ir_dataset)
         ranking = []
 
         for query in tqdm(list(ir_dataset.queries_iter())):
-            query_text = " ".join(tokeniser.getTokens(query.default_text()))
-            docs = []
+            intent_scores = query_intents.get(query.default_text(), {'exploratory': 1.0, "navigational": 0.0})
+            docs = {}
 
-            if query.query_id in snapshots:
-                docs_from_core = sorted([i for i in snapshots[query.query_id].keys()], key=lambda i: snapshots[query.query_id][i])
-                for i in docs_from_core:
-                    docs.extend([str(i)])
-            covered_docs = set(docs)
+            for _, i in navigational_stage[navigational_stage["qid"] == query.query_id].iterrows():
+                docno = str(i["docno"])
+                docs[docno] = float((intent_scores["navigational"] * (1002 - i["rank"])) + docs.get(docno, 0))
 
-            for _, i in retriever.search(query_text).iterrows():
-                if i["docno"] in covered_docs:
-                    continue
-                docs.extend([i["docno"]])
+
+            for _, i in informational_stage[informational_stage["qid"] == query.query_id].iterrows():
+                docno = str(i["docno"])
+                docs[docno] = float((intent_scores["exploratory"] * (1002 - i["rank"])) + docs.get(docno, 0))
 
             pos = 0
-            for i in docs[:1000]:
-                ranking.extend([f"{query.query_id} Q0 {i} {pos} {1000-pos} fusion-with-core"])
+            for doc in sorted(docs.keys(), key=lambda i: docs[i], reverse=True):
+                ranking.extend([f"{query.query_id} Q0 {doc} {pos} {1000-pos} fusion-with-core"])
+                pos += 1
 
         with gzip.open(output_directory / "run.txt.gz", "wt") as f:
             for r in ranking:
@@ -73,15 +76,11 @@ def main(dataset, output, query_intents, navigational_run, informational_run):
     ir_dataset = load(dataset)
     intents = load_intents(query_intents)
     sub_collections = [ir_dataset] if not ir_dataset.get_datasets() else ir_dataset.get_datasets()
-    for k in ["galaxy", "ris", "stratosphere", "sexuality"]:
-        print(k, intents[k])
 
     for snapshot in sub_collections:
         process_dataset(snapshot, output / snapshot.get_snapshot(), intents, navigational_run / snapshot.get_snapshot(), informational_run / snapshot.get_snapshot())
 
-    # The ir-metadata description of your approach
     ir_metadata = Path(__file__).parent / "intent-ir-metadata.yml"
-
     copy(ir_metadata, output / "ir-metadata.yml")
 
 
