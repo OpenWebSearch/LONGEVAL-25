@@ -41,13 +41,13 @@ class ClusterBooster(pt.Transformer):
         result = inp.copy()
         result['score'] = scores
 
-        return result
+        return pt.model.add_ranks(result).sort_values(["qid", "rank"])
 
     def get_clusters(self):
         cluster_file = self.cluster_dir / "clusters.json.gz"
 
         if cluster_file.exists():
-            with gzip.open(cluster_file) as f:
+            with gzip.open(cluster_file, "rt") as f:
                 clusters = json.load(f)
         else:
             with tracking(export_file_path=self.cluster_dir / "cluster-ir-metadata.yml"):
@@ -70,7 +70,7 @@ class ClusterBooster(pt.Transformer):
 
                 clusters = {"train": train_clusters, "test": test_clusters}
 
-                with open(cluster_file, "wt") as f:
+                with gzip.open(cluster_file, "wt") as f:
                     json.dump(clusters, f)
 
         return clusters["train"], clusters["test"]
@@ -104,7 +104,7 @@ def get_index(ir_dataset, index_directory):
     ):
         with tracking(export_file_path=index_directory / "index-ir-metadata.yml"):
             indexer = pt.IterDictIndexer(
-                str(index_directory), overwrite=True, meta={"docno": 100, "text": 20480}
+                str(index_directory), overwrite=True, meta={"docno": 100, "text": 20480}, threads=12
             )
 
             docs = (
@@ -124,7 +124,7 @@ def process_dataset(dataset, index_directory, cluster_directory, output_director
     cluster_booster = ClusterBooster(dataset, cluster_directory)
 
     with tracking(export_file_path=output_directory / "retrieval-ir-metadata.yml"):
-        retriever = pt.terrier.Retriever(index, wmodel="PL2") >> cluster_booster
+        retriever = pt.terrier.Retriever(index, wmodel="BM25") >> cluster_booster
 
         topics = pd.DataFrame(
             [

@@ -36,7 +36,7 @@ method:
 
   retrieval:
     - # Which ranking approach do you use? E.g., bm25
-      name: PL2
+      name: BM25
 
       ##################################################
       # Yes/No Questions
